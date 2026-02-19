@@ -39,7 +39,7 @@ export default function NeofetchScreen({ onEnterInteractive }: Props) {
           <InfoLine label="Skills" value={profile.skills.join(', ')} />
           <div className="mt-4" />
           <LinkLine label="GitHub" href={profile.links.github} display="github/isolumi" />
-          <LinkLine label="LinkedIn" href={profile.links.linkedin} display="linkedin/in/hbx" />
+          <LinkLine label="LinkedIn" href={profile.links.linkedin} display="linkedin/in/hubertxu" />
           <LinkLine label="Email" href={`mailto:${profile.links.email}`} display="contact" />
         </div>
       </div>

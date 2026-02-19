@@ -10,7 +10,7 @@ describe('NeofetchScreen', () => {
 
   it('renders the user name and hostname', () => {
     render(<NeofetchScreen onEnterInteractive={mockOnEnterInteractive} />)
-    expect(screen.getByText(/hubert/i)).toBeInTheDocument()
+    expect(screen.getByText(/hubertxu@lumilumi\.xyz/i)).toBeInTheDocument()
     expect(screen.getByText(/lumilumi\.xyz/i)).toBeInTheDocument()
   })
 

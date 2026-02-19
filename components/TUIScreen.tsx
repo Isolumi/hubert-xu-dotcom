@@ -84,11 +84,18 @@ export default function TUIScreen({ onExitInteractive }: Props) {
     setMessages(prev => [...prev, { id: streamingId, role: 'assistant', content: '', isStreaming: true }])
 
     try {
+      // Build conversation history from messages state
+      const chatHistory = messages
+        .filter(m => m.role === 'user' || m.role === 'assistant')
+        .map(m => ({ role: m.role, content: m.content }))
+      // Add the current user message
+      chatHistory.push({ role: 'user', content: trimmed })
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [{ role: 'user', content: trimmed }],
+          messages: chatHistory,
         }),
       })
 
