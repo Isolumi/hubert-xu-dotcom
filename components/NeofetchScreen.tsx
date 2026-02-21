@@ -1,22 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { profile } from '@/lib/profile'
 
 type Props = {
+  asciiArt: string
   onEnterInteractive: () => void
 }
 
-export default function NeofetchScreen({ onEnterInteractive }: Props) {
-  const [asciiArt, setAsciiArt] = useState('')
-
-  useEffect(() => {
-    fetch('/ascii-art.txt')
-      .then(r => r.text())
-      .then(setAsciiArt)
-      .catch(() => {})
-  }, [])
-
+export default function NeofetchScreen({ asciiArt, onEnterInteractive }: Props) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === '/' || e.key === 'Enter') {
