@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "hubert-xu-com",
+  "name": "hubert-xu-dotcom",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-12-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -15,7 +15,7 @@
     {
       // Self-reference binding required by opennextjs-cloudflare
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "hubert-xu-com"
+      "service": "hubert-xu-dotcom"
     }
   ]
 }
