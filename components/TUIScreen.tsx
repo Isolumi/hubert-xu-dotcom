@@ -14,6 +14,9 @@ type Props = {
 let idCounter = 0
 function nextId() { return String(++idCounter) }
 
+const CHAR_DELAY = 12   // ms per character
+const ITEM_DELAY = 80   // ms per list item
+
 export default function TUIScreen({ onExitInteractive }: Props) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -24,6 +27,8 @@ export default function TUIScreen({ onExitInteractive }: Props) {
   ])
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom on new messages
@@ -44,6 +49,46 @@ export default function TUIScreen({ onExitInteractive }: Props) {
     setMessages(prev => [...prev, { ...msg, id: nextId() }])
   }, [])
 
+  const typewriteMessage = useCallback((
+    role: Message['role'],
+    content: string,
+    items?: Message['items'],
+  ) => {
+    const id = nextId()
+
+    if (items) {
+      // Reveal items one by one
+      setMessages(prev => [...prev, { id, role, content: '', items: [], isStreaming: true }])
+      setIsTyping(true)
+      let i = 0
+      typewriterRef.current = setInterval(() => {
+        i++
+        setMessages(prev => prev.map(m =>
+          m.id === id ? { ...m, items: items.slice(0, i), isStreaming: i < items.length } : m
+        ))
+        if (i >= items.length) {
+          clearInterval(typewriterRef.current!)
+          setIsTyping(false)
+        }
+      }, ITEM_DELAY)
+    } else {
+      // Type content character by character
+      setMessages(prev => [...prev, { id, role, content: '', isStreaming: true }])
+      setIsTyping(true)
+      let i = 0
+      typewriterRef.current = setInterval(() => {
+        i++
+        setMessages(prev => prev.map(m =>
+          m.id === id ? { ...m, content: content.slice(0, i), isStreaming: i < content.length } : m
+        ))
+        if (i >= content.length) {
+          clearInterval(typewriterRef.current!)
+          setIsTyping(false)
+        }
+      }, CHAR_DELAY)
+    }
+  }, [])
+
   const handleSubmit = useCallback(async () => {
     const trimmed = input.trim()
     if (!trimmed) return
@@ -59,7 +104,7 @@ export default function TUIScreen({ onExitInteractive }: Props) {
       const command = getCommand(commandName)
 
       if (!command) {
-        appendMessage({ role: 'system', content: `Unknown command: ${trimmed}. Type /help for a list of commands.` })
+        typewriteMessage('system', `Unknown command: ${trimmed}. Type /help for a list of commands.`)
         return
       }
 
@@ -70,11 +115,7 @@ export default function TUIScreen({ onExitInteractive }: Props) {
         return
       }
 
-      appendMessage({
-        role: 'command',
-        content: output.content ?? '',
-        items: output.items,
-      })
+      typewriteMessage('command', output.content ?? '', output.items)
       return
     }
 
@@ -132,12 +173,15 @@ export default function TUIScreen({ onExitInteractive }: Props) {
     }
   }, [input, appendMessage])
 
+  // Clean up typewriter on unmount
+  useEffect(() => () => { if (typewriterRef.current) clearInterval(typewriterRef.current) }, [])
+
   const handleCommandSelect = (commandName: string) => {
     setInput(`/${commandName}`)
   }
 
   // Show command palette when input starts with /
-  const showPalette = input.startsWith('/') && !isStreaming
+  const showPalette = input.startsWith('/') && !isStreaming && !isTyping
   const paletteQuery = showPalette ? input.slice(1) : ''
 
   return (
@@ -163,7 +207,7 @@ export default function TUIScreen({ onExitInteractive }: Props) {
             value={input}
             onChange={setInput}
             onSubmit={handleSubmit}
-            disabled={isStreaming}
+            disabled={isStreaming || isTyping}
           />
         </div>
       </div>

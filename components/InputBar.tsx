@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+
 type Props = {
   value: string
   onChange: (value: string) => void
@@ -8,10 +10,17 @@ type Props = {
 }
 
 export default function InputBar({ value, onChange, onSubmit, disabled }: Props) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!disabled) inputRef.current?.focus()
+  }, [disabled])
+
   return (
     <div className="flex items-center gap-2 px-4 py-3 border-t border-[#2a2a2a]">
       <span className="text-[#4caf50] select-none">&gt;</span>
       <input
+        ref={inputRef}
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
