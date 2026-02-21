@@ -40,7 +40,7 @@ export const ALL_COMMANDS: Command[] = [
       type: 'list',
       items: [
         { label: 'Education', value: profile.resumeHighlights.education },
-        { label: 'Skills', value: profile.skills.join(', ') },
+        { label: 'Hobbies', value: profile.hobbies.join(', ') },
         ...profile.resumeHighlights.experience.map(e => ({
           label: 'Experience',
           value: String(e),
