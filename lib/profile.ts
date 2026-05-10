@@ -1,7 +1,7 @@
 export const profile = {
   name: 'Hubert Xu',
   hostname: 'lumilumi.xyz',
-  experience: 'SWE @ Shopify, SWE @ MedMe, Prez @ UofTHacks',
+  experience: 'SDE @ Amazon, SWE @ MedMe, Prez @ UofTHacks',
   school: 'University of Toronto',
   hobbies: ['basketball', 'building', 'dilly dallying'],
   links: {
