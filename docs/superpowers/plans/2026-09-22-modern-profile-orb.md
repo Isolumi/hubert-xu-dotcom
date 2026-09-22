@@ -114,7 +114,7 @@ git commit -m "feat: add spherical eye geometry"
 - Produces: `stepLife(grid)` and a `<GameOfLife />` background component.
 - Consumes: the viewport size, pointer position, and `prefers-reduced-motion`.
 
-- [ ] **Step 1: Write a failing blinker test**
+- [x] **Step 1: Write a failing blinker test**
 
 ```ts
 expect(stepLife([
@@ -128,27 +128,27 @@ expect(stepLife([
 ])
 ```
 
-- [ ] **Step 2: Run the focused test and confirm RED**
+- [x] **Step 2: Run the focused test and confirm RED**
 
 Run: `npm test -- --runInBand lib/__tests__/gameOfLife.test.ts`
 
 Expected: FAIL because `stepLife` does not exist.
 
-- [ ] **Step 3: Implement the finite-grid rule engine**
+- [x] **Step 3: Implement the finite-grid rule engine**
 
 Use ordinary non-wrapping boundaries. A live cell survives with two or three neighbors. A dead cell becomes live with exactly three neighbors.
 
-- [ ] **Step 4: Implement the canvas component**
+- [x] **Step 4: Implement the canvas component**
 
 Draw 12 px cells with low-contrast neutral live cells and use `#87b9ff` near the pointer. Resize from the canvas element bounds. Stop simulation intervals when reduced motion is active and remove all listeners and timers on unmount.
 
-- [ ] **Step 5: Run the focused test and confirm GREEN**
+- [x] **Step 5: Run the focused test and confirm GREEN**
 
 Run: `npm test -- --runInBand lib/__tests__/gameOfLife.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit the background**
+- [x] **Step 6: Commit the background**
 
 ```bash
 git add lib/gameOfLife.ts lib/__tests__/gameOfLife.test.ts components/GameOfLife.tsx
