@@ -17,8 +17,8 @@ export default function InputBar({ value, onChange, onSubmit, disabled }: Props)
   }, [disabled])
 
   return (
-    <div className="flex items-center gap-2 px-4 py-3 border-t border-[#2a2a2a]">
-      <span className="text-[#4caf50] select-none">&gt;</span>
+    <div className="flex items-center gap-2 px-4 py-3 border-t border-white/12">
+      <span className="text-[#87b9ff] select-none">&gt;</span>
       <input
         ref={inputRef}
         type="text"
@@ -33,7 +33,7 @@ export default function InputBar({ value, onChange, onSubmit, disabled }: Props)
         autoFocus
         autoComplete="off"
         spellCheck={false}
-        className="flex-1 bg-transparent text-[#e0e0e0] outline-none caret-[#e0e0e0] placeholder:text-[#555]"
+        className="flex-1 bg-transparent text-[#e8ece9] outline-none caret-[#87b9ff] placeholder:text-[#68716c] disabled:cursor-wait"
         placeholder={disabled ? '' : 'type a command or ask me anything...'}
       />
     </div>

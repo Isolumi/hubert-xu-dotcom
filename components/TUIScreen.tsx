@@ -33,7 +33,7 @@ export default function TUIScreen({ onExitInteractive }: Props) {
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    bottomRef.current?.scrollIntoView?.({ behavior: 'smooth' })
   }, [messages])
 
   // Esc key exits interactive mode
@@ -185,13 +185,13 @@ export default function TUIScreen({ onExitInteractive }: Props) {
   const paletteQuery = showPalette ? input.slice(1) : ''
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] font-mono flex items-center justify-center p-4">
-      <div className="w-full max-w-3xl h-[80vh] flex flex-col border border-[#2a2a2a] rounded">
+    <div className="min-h-screen bg-[#050605] text-[#e8ece9] font-mono flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-4xl h-[min(80svh,44rem)] flex flex-col border border-white/12 rounded-xl bg-[#080a09]/95 shadow-[0_40px_100px_rgba(0,0,0,0.55)] backdrop-blur-xl overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center px-4 py-2 border-b border-[#2a2a2a]">
-          <span className="text-[#00bcd4] font-bold">lumicode</span>
-          <span className="ml-auto text-[#555] text-xs">esc to go back</span>
+        <div className="flex items-center px-4 py-3 border-b border-white/12">
+          <span className="text-[#87b9ff] font-semibold">lumicode</span>
+          <span className="ml-auto text-[#68716c] text-xs">esc to return</span>
         </div>
 
         {/* Messages */}

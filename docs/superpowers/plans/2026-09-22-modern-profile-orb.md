@@ -251,6 +251,7 @@ git commit -m "feat: replace neofetch with modern profile"
 - Modify: `components/InputBar.tsx`
 - Modify: `components/MessageList.tsx`
 - Modify: `components/CommandPalette.tsx`
+- Modify: `app/page.tsx`
 - Modify: `app/globals.css`
 - Modify: `app/loading.tsx`
 
@@ -258,29 +259,29 @@ git commit -m "feat: replace neofetch with modern profile"
 - Consumes: `ProfileScreen`, the existing `TUIScreen`, and existing callback contracts.
 - Produces: a complete profile-to-lumicode flow with a consistent visual system.
 
-- [ ] **Step 1: Write a failing integration test**
+- [x] **Step 1: Write a failing integration test**
 
 Render `HomeClient`, click `Enter lumicode`, assert that the lumicode heading appears, send Escape, and assert that the Hubert Xu heading returns.
 
-- [ ] **Step 2: Run the focused test and confirm RED**
+- [x] **Step 2: Run the focused test and confirm RED**
 
 Run: `npm test -- --runInBand components/__tests__/HomeClient.test.tsx`
 
 Expected: FAIL while `HomeClient` still imports `NeofetchScreen`.
 
-- [ ] **Step 3: Connect the new profile mode**
+- [x] **Step 3: Connect the new profile mode**
 
 Rename the mode value from `neofetch` to `profile`, import `ProfileScreen`, and preserve the existing callbacks.
 
-- [ ] **Step 4: Apply the shared TUI palette**
+- [x] **Step 4: Apply the shared TUI palette**
 
 Change TUI cyan, green, borders, and background to the approved accent, text, rule, and panel tokens. Keep all command behavior unchanged.
 
-- [ ] **Step 5: Update global and loading styles**
+- [x] **Step 5: Update global and loading styles**
 
 Set the global dark surface, system sans profile default, monospace utility, selection color, and reduced-motion baseline. Make loading state use the same palette without adding a new visual concept.
 
-- [ ] **Step 6: Run the focused and full suites**
+- [x] **Step 6: Run the focused and full suites**
 
 Run:
 
@@ -291,7 +292,7 @@ npm test -- --runInBand
 
 Expected: all tests PASS, including the two tests that were stale at baseline.
 
-- [ ] **Step 7: Commit the integration**
+- [x] **Step 7: Commit the integration**
 
 ```bash
 git add components app

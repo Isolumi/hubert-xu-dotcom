@@ -1,21 +1,21 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import NeofetchScreen from '@/components/NeofetchScreen'
+import ProfileScreen from '@/components/ProfileScreen'
 import TUIScreen from '@/components/TUIScreen'
 
-type Mode = 'neofetch' | 'interactive'
+type Mode = 'profile' | 'interactive'
 
-export default function HomeClient({ asciiArt }: { asciiArt: string }) {
-  const [mode, setMode] = useState<Mode>('neofetch')
+export default function HomeClient() {
+  const [mode, setMode] = useState<Mode>('profile')
 
   const enterInteractive = useCallback(() => setMode('interactive'), [])
-  const exitInteractive = useCallback(() => setMode('neofetch'), [])
+  const exitInteractive = useCallback(() => setMode('profile'), [])
 
   return (
     <main>
-      {mode === 'neofetch' ? (
-        <NeofetchScreen asciiArt={asciiArt} onEnterInteractive={enterInteractive} />
+      {mode === 'profile' ? (
+        <ProfileScreen onEnterInteractive={enterInteractive} />
       ) : (
         <TUIScreen onExitInteractive={exitInteractive} />
       )}

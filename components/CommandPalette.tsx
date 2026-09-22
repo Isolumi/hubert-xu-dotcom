@@ -15,15 +15,15 @@ export default function CommandPalette({ query, onSelect }: Props) {
   if (filtered.length === 0) return null
 
   return (
-    <div className="absolute bottom-full left-0 right-0 mb-1 mx-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded overflow-hidden">
+    <div className="absolute bottom-full left-0 right-0 mb-1 mx-4 bg-[#101310] border border-white/12 rounded-lg overflow-hidden shadow-2xl">
       {filtered.map(cmd => (
         <button
           key={cmd.name}
           onClick={() => onSelect(cmd.name)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-[#2a2a2a] transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-[#172131] focus-visible:bg-[#172131] outline-none transition-colors"
         >
-          <span className="text-[#00bcd4] font-mono text-sm">/{cmd.name}</span>
-          <span className="text-[#777] text-sm">{cmd.description}</span>
+          <span className="text-[#87b9ff] font-mono text-sm">/{cmd.name}</span>
+          <span className="text-[#818a85] text-sm">{cmd.description}</span>
         </button>
       ))}
     </div>
