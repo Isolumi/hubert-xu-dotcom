@@ -171,7 +171,7 @@ export default function TUIScreen({ onExitInteractive }: Props) {
     } finally {
       setIsStreaming(false)
     }
-  }, [input, appendMessage])
+  }, [input, appendMessage, messages, typewriteMessage])
 
   // Clean up typewriter on unmount
   useEffect(() => () => { if (typewriterRef.current) clearInterval(typewriterRef.current) }, [])

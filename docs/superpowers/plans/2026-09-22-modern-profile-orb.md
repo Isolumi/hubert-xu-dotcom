@@ -308,7 +308,7 @@ git commit -m "feat: integrate profile and lumicode modes"
 - Consumes: the complete site.
 - Produces: fresh test, lint, build, desktop, mobile, interaction, and console evidence.
 
-- [ ] **Step 1: Run automated verification**
+- [x] **Step 1: Run automated verification**
 
 ```bash
 npm test -- --runInBand
@@ -318,19 +318,19 @@ npm run build
 
 Expected: all commands exit with code 0.
 
-- [ ] **Step 2: Start the local application**
+- [x] **Step 2: Start the local application**
 
 Run: `npm run dev`
 
-- [ ] **Step 3: Verify desktop behavior in a real browser**
+- [x] **Step 3: Verify desktop behavior in a real browser**
 
 Check the default top-right eye pose, center and opposite-quadrant slant, experience fan hover and focus, links, lumicode entry, Escape return, and a clean console.
 
-- [ ] **Step 4: Verify mobile behavior**
+- [x] **Step 4: Verify mobile behavior**
 
 Check a viewport at or below 390 px. Confirm the stacked layout fits without horizontal scroll, links wrap cleanly, the fan remains usable, and the lumicode button remains visible.
 
-- [ ] **Step 5: Verify reduced motion**
+- [x] **Step 5: Verify reduced motion**
 
 Confirm that the canvas does not continue stepping and that the orb does not blink or spring when reduced motion is enabled.
 
