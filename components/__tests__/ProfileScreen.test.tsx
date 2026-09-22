@@ -43,9 +43,20 @@ describe('ProfileScreen', () => {
     expect(screen.getByRole('img', { name: 'MedMe logo' })).toBeInTheDocument()
     expect(screen.getByRole('img', { name: 'UofTHacks logo' })).toBeInTheDocument()
     expect(screen.getByText('University of Toronto')).toBeInTheDocument()
-    expect(screen.getByText('Basketball · building · dilly-dallying')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Show education details' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Animate hobbies' })).toBeInTheDocument()
+  })
+
+  it('makes each lowercase hobby its own text animation target', () => {
+    render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
+
+    const basketball = screen.getByRole('button', { name: 'Animate basketball' })
+    const building = screen.getByRole('button', { name: 'Animate building' })
+    const dillyDallying = screen.getByRole('button', { name: 'Animate dilly-dallying' })
+
+    expect(basketball).toHaveTextContent('basketball')
+    expect(building).toHaveTextContent('building')
+    expect(dillyDallying).toHaveTextContent('dilly-dallying')
+    expect(screen.queryByRole('button', { name: 'Animate hobbies' })).not.toBeInTheDocument()
   })
 
   it('renders the profile links', () => {

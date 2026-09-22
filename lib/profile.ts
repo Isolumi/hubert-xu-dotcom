@@ -4,7 +4,7 @@ export const profile = {
   role: 'Software engineer · University of Toronto',
   experience: 'Developer @ Amazon, SWE @ MedMe, Prez @ UofTHacks',
   school: 'University of Toronto',
-  hobbies: ['Basketball', 'building', 'dilly-dallying'],
+  hobbies: ['basketball', 'building', 'dilly-dallying'],
   skills: [
     'Python',
     'C',

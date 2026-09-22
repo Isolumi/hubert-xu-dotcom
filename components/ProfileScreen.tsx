@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { Fragment, useEffect, type CSSProperties } from 'react'
 import GameOfLife from '@/components/GameOfLife'
 import OrbCharacter from '@/components/OrbCharacter'
 import { profile } from '@/lib/profile'
@@ -82,14 +82,29 @@ export default function ProfileScreen({ onEnterInteractive }: Props) {
             <div className={styles.row}>
               <dt>Hobbies</dt>
               <dd>
-                <button type="button" className={styles.hobbyReveal} aria-label="Animate hobbies">
-                  <span className={styles.hobbyLabel}>{profile.hobbies.join(' · ')}</span>
-                  <span className={styles.hobbyMotion} aria-hidden="true">
-                    <span className={styles.ball} />
-                    <span className={styles.blocks}><i /><i /><i /></span>
-                    <span className={styles.wanderDot} />
-                  </span>
-                </button>
+                <span className={styles.hobbyList}>
+                  {profile.hobbies.map((hobby, hobbyIndex) => (
+                    <Fragment key={hobby}>
+                      {hobbyIndex > 0 && <span className={styles.hobbySeparator} aria-hidden="true">·</span>}
+                      <button
+                        type="button"
+                        className={styles.hobbyWord}
+                        data-hobby={hobby}
+                        aria-label={`Animate ${hobby}`}
+                      >
+                        {Array.from(hobby).map((character, characterIndex) => (
+                          <span
+                            className={styles.hobbyGlyph}
+                            key={`${character}-${characterIndex}`}
+                            style={{ '--character-index': characterIndex } as CSSProperties}
+                          >
+                            {character}
+                          </span>
+                        ))}
+                      </button>
+                    </Fragment>
+                  ))}
+                </span>
               </dd>
             </div>
           </dl>
