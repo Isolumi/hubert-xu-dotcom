@@ -1,8 +1,10 @@
 /** @jest-environment node */
 
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { metadata } from '../layout'
-import * as openGraphImage from '../opengraph-image'
-import * as twitterImage from '../twitter-image'
+
+const socialCardPath = join(process.cwd(), 'public', 'social-card.png')
 
 describe('site metadata', () => {
   it('gives link previews the public site identity', () => {
@@ -17,21 +19,36 @@ describe('site metadata', () => {
       siteName: 'Hubert Xu',
       locale: 'en_CA',
       type: 'website',
+      images: [{
+        url: '/social-card.png',
+        width: 1200,
+        height: 630,
+        alt: 'lumi',
+        type: 'image/png',
+      }],
     })
     expect(metadata.twitter).toEqual({
       card: 'summary_large_image',
       title: 'Hubert Xu',
       description: 'Software engineer and builder.',
+      images: [{
+        url: '/social-card.png',
+        width: 1200,
+        height: 630,
+        alt: 'lumi',
+      }],
     })
   })
 
-  it.each([
-    ['Open Graph', openGraphImage],
-    ['X', twitterImage],
-  ])('%s generates a large PNG preview with Lumi alt text', (_name, imageRoute) => {
-    expect(imageRoute.alt).toBe('lumi')
-    expect(imageRoute.size).toEqual({ width: 1200, height: 630 })
-    expect(imageRoute.contentType).toBe('image/png')
-    expect(imageRoute.default()).toBeInstanceOf(Response)
+  it('ships the social card as a static 1200 by 630 PNG', () => {
+    const socialCardExists = existsSync(socialCardPath)
+
+    expect(socialCardExists).toBe(true)
+    if (!socialCardExists) return
+
+    const socialCard = readFileSync(socialCardPath)
+    expect(socialCard.subarray(1, 4).toString()).toBe('PNG')
+    expect(socialCard.readUInt32BE(16)).toBe(1200)
+    expect(socialCard.readUInt32BE(20)).toBe(630)
   })
 })
