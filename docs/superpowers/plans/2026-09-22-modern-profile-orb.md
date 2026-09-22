@@ -334,7 +334,7 @@ Check a viewport at or below 390 px. Confirm the stacked layout fits without hor
 
 Confirm that the canvas does not continue stepping and that the orb does not blink or spring when reduced motion is enabled.
 
-- [ ] **Step 6: Review the final diff**
+- [x] **Step 6: Review the final diff**
 
 Run: `git diff development...HEAD --stat && git status --short`
 
