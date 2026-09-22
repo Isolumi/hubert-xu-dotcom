@@ -46,6 +46,21 @@ describe('ProfileScreen', () => {
     expect(screen.getByRole('button', { name: 'Show education details' })).toBeInTheDocument()
   })
 
+  it('pairs each company with its role in the experience fan', () => {
+    render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
+
+    const amazonCard = screen.getByText('Amazon').parentElement
+    const medMeCard = screen.getByText('MedMe').parentElement
+    const uofthacksCard = screen.getByText('UofTHacks').parentElement
+
+    expect(amazonCard).not.toBeNull()
+    expect(medMeCard).not.toBeNull()
+    expect(uofthacksCard).not.toBeNull()
+    expect(within(amazonCard!).getByText('Software Developer')).toBeInTheDocument()
+    expect(within(medMeCard!).getByText('Software Engineer')).toBeInTheDocument()
+    expect(within(uofthacksCard!).getByText('President')).toBeInTheDocument()
+  })
+
   it('makes each lowercase hobby its own text animation target', () => {
     render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
 

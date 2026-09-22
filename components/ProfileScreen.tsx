@@ -48,7 +48,9 @@ export default function ProfileScreen({ onEnterInteractive }: Props) {
                 <button
                   type="button"
                   className={styles.companyFan}
-                  aria-label="Show experience at Amazon, MedMe, and UofTHacks"
+                  aria-label={`Show experience: ${profile.companies
+                    .map(company => `${company.name}, ${company.role}`)
+                    .join('; ')}`}
                 >
                   {profile.companies.map(company => (
                     <span className={styles.companyBadge} key={company.name}>
@@ -59,7 +61,10 @@ export default function ProfileScreen({ onEnterInteractive }: Props) {
                         width={22}
                         height={22}
                       />
-                      <span className={styles.companyName}>{company.name}</span>
+                      <span className={styles.companyCopy}>
+                        <span className={styles.companyName}>{company.name}</span>
+                        <span className={styles.companyRole}>{company.role}</span>
+                      </span>
                     </span>
                   ))}
                 </button>
