@@ -4,7 +4,8 @@ export type Point3D = Point2D & { z: number }
 export const SPHERE_CENTER = { x: 114.2705, y: 114.228 }
 export const SPHERE_RADIUS = 114.228
 export const SURFACE_LIMIT = 0.62
-export const EYE_SCALE = 1.12
+export const EYE_SCALE = 1.22
+const REST_GAZE_INSET = 0.78
 
 const EYE_ANCHOR = { x: 160, y: 62.5 }
 
@@ -117,7 +118,10 @@ function frameFromNormal(normal: Point3D): SurfaceFrame {
 const baseNormal = normalize(liftPoint(EYE_ANCHOR))
 const baseFrame = frameFromNormal(baseNormal)
 
-export const BASE_GAZE = { x: baseNormal.x, y: baseNormal.y }
+export const BASE_GAZE = {
+  x: baseNormal.x * REST_GAZE_INSET,
+  y: baseNormal.y * REST_GAZE_INSET,
+}
 
 function rotateBetweenFrames(point: Point3D, from: SurfaceFrame, to: SurfaceFrame) {
   const localRight = dot(point, from.right)

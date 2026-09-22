@@ -9,6 +9,7 @@
     "preview": "opennextjs-cloudflare build && wrangler dev",
     "deploy": "opennextjs-cloudflare build && wrangler deploy",
     "lint": "eslint",
+    "social-card": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-social-card.mjs",
     "test": "jest",
     "test:watch": "jest --watch"
   },

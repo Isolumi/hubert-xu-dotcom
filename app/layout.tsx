@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     locale: 'en_CA',
     type: 'website',
     images: [{
-      url: '/social-card.png',
+      url: '/social-card.png?v=2',
       width: 1200,
       height: 630,
       alt: 'lumi',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'Hubert Xu',
     description: 'Software engineer and builder.',
     images: [{
-      url: '/social-card.png',
+      url: '/social-card.png?v=2',
       width: 1200,
       height: 630,
       alt: 'lumi',

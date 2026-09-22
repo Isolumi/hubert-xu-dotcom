@@ -2,6 +2,8 @@ import {
   BASE_GAZE,
   EYE_SCALE,
   LEFT_EYE_VERTICES,
+  RIGHT_EYE_VERTICES,
+  SPHERE_CENTER,
   SPHERE_RADIUS,
   projectEyePath,
   projectEyePoint,
@@ -18,21 +20,33 @@ describe('orb eye geometry', () => {
       { x: 0, y: 2 },
     ]
 
-    expect(EYE_SCALE).toBe(1.12)
     expect(scalePolygon(rectangle, EYE_SCALE)).toEqual([
-      { x: -0.2400000000000002, y: -0.1200000000000001 },
-      { x: 4.24, y: -0.1200000000000001 },
-      { x: 4.24, y: 2.12 },
-      { x: -0.2400000000000002, y: 2.12 },
+      { x: -0.43999999999999995, y: -0.21999999999999997 },
+      { x: 4.4399999999999995, y: -0.21999999999999997 },
+      { x: 4.4399999999999995, y: 2.2199999999999998 },
+      { x: -0.43999999999999995, y: 2.2199999999999998 },
     ])
   })
 
-  it('keeps the approved top-right pose exact at rest', () => {
-    for (const point of LEFT_EYE_VERTICES) {
-      const projected = projectEyePoint(point, BASE_GAZE)
-      expect(projected.x).toBeCloseTo(point.x, 6)
-      expect(projected.y).toBeCloseTo(point.y, 6)
-    }
+  it('rests closer to the sphere center while keeping a top-right gaze', () => {
+    const restingPoints = [...LEFT_EYE_VERTICES, ...RIGHT_EYE_VERTICES]
+      .map(point => projectEyePoint(point, BASE_GAZE))
+    const restingCenter = restingPoints.reduce(
+      (center, point) => ({
+        x: center.x + point.x / restingPoints.length,
+        y: center.y + point.y / restingPoints.length,
+      }),
+      { x: 0, y: 0 },
+    )
+
+    expect(restingCenter.x).toBeGreaterThan(SPHERE_CENTER.x)
+    expect(restingCenter.y).toBeLessThan(SPHERE_CENTER.y)
+    expect(
+      Math.hypot(
+        restingCenter.x - SPHERE_CENTER.x,
+        restingCenter.y - SPHERE_CENTER.y,
+      ),
+    ).toBeLessThan(58)
   })
 
   it('turns the eye slant with the sphere surface', () => {
