@@ -207,35 +207,35 @@ git commit -m "feat: add pointer-tracking orb character"
 - Consumes: `profile`, `<GameOfLife />`, `<OrbCharacter />`, and `onEnterInteractive()`.
 - Produces: the complete profile mode and its `/`, Enter, click, hover, and focus interactions.
 
-- [ ] **Step 1: Write failing screen tests**
+- [x] **Step 1: Write failing screen tests**
 
 Cover visible name and role, experience company names, school, hobbies, four external links, the Enter lumicode button, `/` and Enter keyboard entry, and company fan keyboard focus.
 
-- [ ] **Step 2: Run the focused tests and confirm RED**
+- [x] **Step 2: Run the focused tests and confirm RED**
 
 Run: `npm test -- --runInBand components/__tests__/ProfileScreen.test.tsx lib/__tests__/profile.test.ts`
 
 Expected: FAIL because `ProfileScreen` and the new typed profile fields do not exist.
 
-- [ ] **Step 3: Update profile data**
+- [x] **Step 3: Update profile data**
 
 Add typed `role`, `companies`, and display link labels without removing fields used by commands or the system prompt.
 
-- [ ] **Step 4: Build the profile composition**
+- [x] **Step 4: Build the profile composition**
 
 Use semantic headings, rows, links, and a real button. The company fan uses three overlapping badges at rest and spreads on hover or focus. Keep the page copy short. Use `aria-hidden` for decorative company letters and expose full company names to assistive technology.
 
-- [ ] **Step 5: Build responsive styles**
+- [x] **Step 5: Build responsive styles**
 
 Use the approved tokens, desktop two-column layout, stacked mobile layout, visible focus rings, and reduced-motion rules. Keep line length below 80 characters and do not add a marketing headline.
 
-- [ ] **Step 6: Run the focused tests and confirm GREEN**
+- [x] **Step 6: Run the focused tests and confirm GREEN**
 
 Run: `npm test -- --runInBand components/__tests__/ProfileScreen.test.tsx lib/__tests__/profile.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 7: Commit the profile screen**
+- [x] **Step 7: Commit the profile screen**
 
 ```bash
 git add components/ProfileScreen.tsx components/ProfileScreen.module.css components/__tests__/ProfileScreen.test.tsx lib/profile.ts lib/__tests__/profile.test.ts components/NeofetchScreen.tsx components/__tests__/NeofetchScreen.test.tsx

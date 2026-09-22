@@ -1,9 +1,16 @@
 export const profile = {
   name: 'Hubert Xu',
-  hostname: 'lumilumi.xyz',
+  hostname: 'hubert-xu.com',
+  role: 'Software engineer · University of Toronto',
   experience: 'SDE @ Amazon, SWE @ MedMe, Prez @ UofTHacks',
   school: 'University of Toronto',
-  hobbies: ['basketball', 'building', 'dilly dallying'],
+  hobbies: ['Basketball', 'building', 'dilly-dallying'],
+  skills: ['TypeScript', 'React', 'Next.js', 'Python', 'Go', 'PostgreSQL'],
+  companies: [
+    { mark: 'a', name: 'Amazon', role: 'Software Development Engineer' },
+    { mark: 'M', name: 'MedMe', role: 'Software Engineer' },
+    { mark: 'U', name: 'UofTHacks', role: 'President' },
+  ],
   links: {
     github: 'https://github.com/isolumi',
     linkedin: 'https://www.linkedin.com/in/~hx/',
@@ -44,13 +51,15 @@ export const profile = {
   systemPrompt: '',
 }
 
-profile.systemPrompt = `You are a terminal AI assistant on Hubert Xu's personal website (lumilumi.xyz).
+profile.systemPrompt = `You are a terminal AI assistant on Hubert Xu's personal website (hubert-xu.com).
 Answer questions about Hubert concisely and accurately based on the following information:
 
 Name: ${profile.name}
+Role: ${profile.role}
 Experience: ${profile.experience}
 School: ${profile.school}
 Hobbies: ${profile.hobbies.join(', ')}
+Skills: ${profile.skills.join(', ')}
 GitHub: ${profile.links.github}
 LinkedIn: ${profile.links.linkedin}
 Email: ${profile.links.email}
