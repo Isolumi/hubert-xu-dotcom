@@ -69,7 +69,7 @@ The page avoids a generic portfolio hero, marketing copy, card grids, gradients,
 - Produces: `BASE_GAZE`, `EYE_SCALE`, `LEFT_EYE_VERTICES`, `RIGHT_EYE_VERTICES`, `scalePolygon(points, amount)`, and `projectEyePath(points, target, spacing)`.
 - Consumes: no application code.
 
-- [ ] **Step 1: Write failing geometry tests**
+- [x] **Step 1: Write failing geometry tests**
 
 Add literal checks for these behaviors:
 
@@ -80,23 +80,23 @@ expect(axisAt({ x: -0.4, y: -0.45 }).x).toBeLessThan(0)
 expect(axisAt({ x: 0.4, y: -0.45 }).x).toBeGreaterThan(0)
 ```
 
-- [ ] **Step 2: Run the focused test and confirm RED**
+- [x] **Step 2: Run the focused test and confirm RED**
 
 Run: `npm test -- --runInBand lib/__tests__/orbEyes.test.ts`
 
 Expected: FAIL because `lib/orbEyes.ts` does not exist.
 
-- [ ] **Step 3: Implement the geometry module**
+- [x] **Step 3: Implement the geometry module**
 
 Port the approved frame mapping from the spec. Build an orthonormal frame from the sphere normal using projected world-down, decompose each lifted point in the base frame, compose it in the target frame, and project back to SVG coordinates.
 
-- [ ] **Step 4: Run the focused test and confirm GREEN**
+- [x] **Step 4: Run the focused test and confirm GREEN**
 
 Run: `npm test -- --runInBand lib/__tests__/orbEyes.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit the geometry**
+- [x] **Step 5: Commit the geometry**
 
 ```bash
 git add lib/orbEyes.ts lib/__tests__/orbEyes.test.ts
@@ -338,4 +338,3 @@ Confirm that the canvas does not continue stepping and that the orb does not bli
 Run: `git diff development...HEAD --stat && git status --short`
 
 Expected: only the planned site, test, and plan files are present; generated output is absent.
-
