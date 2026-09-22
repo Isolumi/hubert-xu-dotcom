@@ -38,9 +38,9 @@ export const profile = {
     'Kafka',
   ],
   companies: [
-    { mark: 'a', name: 'Amazon', role: 'Software Developer' },
-    { mark: 'M', name: 'MedMe', role: 'Software Engineer' },
-    { mark: 'U', name: 'UofTHacks', role: 'President' },
+    { logo: '/logos/amazon.png', name: 'Amazon', role: 'Software Developer' },
+    { logo: '/logos/medme.png', name: 'MedMe', role: 'Software Engineer' },
+    { logo: '/logos/uofthacks.svg', name: 'UofTHacks', role: 'President' },
   ],
   links: {
     github: 'https://github.com/isolumi',

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import MessageList from './MessageList'
 import InputBar from './InputBar'
 import CommandPalette from './CommandPalette'
-import { getCommand } from '@/lib/commands'
+import { ALL_COMMANDS, getCommand } from '@/lib/commands'
 import type { Message } from '@/lib/types'
 
 type Props = {
@@ -14,8 +14,7 @@ type Props = {
 let idCounter = 0
 function nextId() { return String(++idCounter) }
 
-const CHAR_DELAY = 12   // ms per character
-const ITEM_DELAY = 80   // ms per list item
+type TerminalStatus = 'ready' | 'thinking' | 'streaming'
 
 export default function TUIScreen({ onExitInteractive }: Props) {
   const [messages, setMessages] = useState<Message[]>([
@@ -26,14 +25,15 @@ export default function TUIScreen({ onExitInteractive }: Props) {
     },
   ])
   const [input, setInput] = useState('')
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [isTyping, setIsTyping] = useState(false)
-  const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [terminalStatus, setTerminalStatus] = useState<TerminalStatus>('ready')
+  const [paletteIndex, setPaletteIndex] = useState(0)
+  const historyRef = useRef<string[]>([])
+  const historyIndexRef = useRef(0)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    bottomRef.current?.scrollIntoView?.({ behavior: 'smooth' })
+    bottomRef.current?.scrollIntoView?.({ block: 'end' })
   }, [messages])
 
   // Esc key exits interactive mode
@@ -49,51 +49,22 @@ export default function TUIScreen({ onExitInteractive }: Props) {
     setMessages(prev => [...prev, { ...msg, id: nextId() }])
   }, [])
 
-  const typewriteMessage = useCallback((
-    role: Message['role'],
-    content: string,
-    items?: Message['items'],
-  ) => {
-    const id = nextId()
-
-    if (items) {
-      // Reveal items one by one
-      setMessages(prev => [...prev, { id, role, content: '', items: [], isStreaming: true }])
-      setIsTyping(true)
-      let i = 0
-      typewriterRef.current = setInterval(() => {
-        i++
-        setMessages(prev => prev.map(m =>
-          m.id === id ? { ...m, items: items.slice(0, i), isStreaming: i < items.length } : m
-        ))
-        if (i >= items.length) {
-          clearInterval(typewriterRef.current!)
-          setIsTyping(false)
-        }
-      }, ITEM_DELAY)
-    } else {
-      // Type content character by character
-      setMessages(prev => [...prev, { id, role, content: '', isStreaming: true }])
-      setIsTyping(true)
-      let i = 0
-      typewriterRef.current = setInterval(() => {
-        i++
-        setMessages(prev => prev.map(m =>
-          m.id === id ? { ...m, content: content.slice(0, i), isStreaming: i < content.length } : m
-        ))
-        if (i >= content.length) {
-          clearInterval(typewriterRef.current!)
-          setIsTyping(false)
-        }
-      }, CHAR_DELAY)
-    }
-  }, [])
+  const paletteCommands = useMemo(() => (
+    input.startsWith('/')
+      ? ALL_COMMANDS.filter(command => command.name.startsWith(input.slice(1).toLowerCase()))
+      : []
+  ), [input])
+  const showPalette = terminalStatus === 'ready' && input.startsWith('/') && paletteCommands.length > 0
 
   const handleSubmit = useCallback(async () => {
-    const trimmed = input.trim()
+    const selectedCommand = showPalette ? paletteCommands[paletteIndex] : undefined
+    const trimmed = selectedCommand ? `/${selectedCommand.name}` : input.trim()
     if (!trimmed) return
 
     setInput('')
+    setPaletteIndex(0)
+    historyRef.current.push(trimmed)
+    historyIndexRef.current = historyRef.current.length
 
     // User message
     appendMessage({ role: 'user', content: trimmed })
@@ -104,7 +75,7 @@ export default function TUIScreen({ onExitInteractive }: Props) {
       const command = getCommand(commandName)
 
       if (!command) {
-        typewriteMessage('system', `Unknown command: ${trimmed}. Type /help for a list of commands.`)
+        appendMessage({ role: 'system', content: `Unknown command: ${trimmed}. Type /help for a list of commands.` })
         return
       }
 
@@ -115,12 +86,12 @@ export default function TUIScreen({ onExitInteractive }: Props) {
         return
       }
 
-      typewriteMessage('command', output.content ?? '', output.items)
+      appendMessage({ role: 'command', content: output.content ?? '', items: output.items })
       return
     }
 
     // Natural language → Gemini
-    setIsStreaming(true)
+    setTerminalStatus('thinking')
     const streamingId = nextId()
     setMessages(prev => [...prev, { id: streamingId, role: 'assistant', content: '', isStreaming: true }])
 
@@ -140,7 +111,8 @@ export default function TUIScreen({ onExitInteractive }: Props) {
         }),
       })
 
-      if (!res.body) throw new Error('No response body')
+      if (!res.ok || !res.body) throw new Error('No response body')
+      setTerminalStatus('streaming')
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let accumulated = ''
@@ -169,30 +141,67 @@ export default function TUIScreen({ onExitInteractive }: Props) {
         )
       )
     } finally {
-      setIsStreaming(false)
+      setTerminalStatus('ready')
     }
-  }, [input, appendMessage, messages, typewriteMessage])
-
-  // Clean up typewriter on unmount
-  useEffect(() => () => { if (typewriterRef.current) clearInterval(typewriterRef.current) }, [])
+  }, [appendMessage, input, messages, paletteCommands, paletteIndex, showPalette])
 
   const handleCommandSelect = (commandName: string) => {
     setInput(`/${commandName}`)
+    setPaletteIndex(0)
   }
 
-  // Show command palette when input starts with /
-  const showPalette = input.startsWith('/') && !isStreaming && !isTyping
+  const handleInputChange = (value: string) => {
+    setInput(value)
+    setPaletteIndex(0)
+    historyIndexRef.current = historyRef.current.length
+  }
+
+  const handleNavigate = (direction: -1 | 1) => {
+    if (showPalette) {
+      setPaletteIndex(current => {
+        const next = current + direction
+        return (next + paletteCommands.length) % paletteCommands.length
+      })
+      return
+    }
+
+    const history = historyRef.current
+    if (history.length === 0) return
+    const next = Math.min(history.length, Math.max(0, historyIndexRef.current + direction))
+    historyIndexRef.current = next
+    setInput(next === history.length ? '' : history[next])
+  }
+
+  const handleComplete = () => {
+    const command = paletteCommands[paletteIndex]
+    if (!command) return
+    setInput(`/${command.name}`)
+    setPaletteIndex(0)
+  }
+
+  const handleClear = () => {
+    setMessages([])
+    setInput('')
+    setPaletteIndex(0)
+  }
+
   const paletteQuery = showPalette ? input.slice(1) : ''
+  const isBusy = terminalStatus !== 'ready'
 
   return (
-    <div className="min-h-screen bg-[#050605] text-[#e8ece9] font-mono flex items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-4xl h-[min(80svh,44rem)] flex flex-col border border-white/12 rounded-xl bg-[#080a09]/95 shadow-[0_40px_100px_rgba(0,0,0,0.55)] backdrop-blur-xl overflow-hidden">
+    <div className="min-h-[100svh] bg-[#050605] text-[#e8ece9] font-mono flex p-0 sm:p-4">
+      <section aria-label="Lumicode terminal" className="w-full max-w-6xl mx-auto min-h-[100svh] sm:min-h-0 sm:h-[calc(100svh-2rem)] flex flex-col border-y sm:border border-white/12 sm:rounded-xl bg-[#080a09]/95 shadow-[0_40px_100px_rgba(0,0,0,0.55)] backdrop-blur-xl overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center px-4 py-3 border-b border-white/12">
+        <header className="flex items-center gap-3 px-4 py-3 border-b border-white/12 bg-[#060807]">
           <span className="text-[#87b9ff] font-semibold">lumicode</span>
-          <span className="ml-auto text-[#68716c] text-xs">esc to return</span>
-        </div>
+          <span className="hidden sm:inline text-[#4f5a54] text-xs">profile agent</span>
+          <span role="status" aria-live="polite" className="ml-auto inline-flex items-center gap-1.5 text-[#8b9690] text-xs">
+            <i className={`w-1.5 h-1.5 rounded-full ${isBusy ? 'bg-[#87b9ff] animate-pulse' : 'bg-[#70c998]'}`} />
+            {terminalStatus}
+          </span>
+          <span className="text-[#59635e] text-xs"><kbd>esc</kbd> return</span>
+        </header>
 
         {/* Messages */}
         <MessageList messages={messages} />
@@ -201,16 +210,24 @@ export default function TUIScreen({ onExitInteractive }: Props) {
         {/* Input area (relative for palette positioning) */}
         <div className="relative">
           {showPalette && (
-            <CommandPalette query={paletteQuery} onSelect={handleCommandSelect} />
+            <CommandPalette
+              query={paletteQuery}
+              onSelect={handleCommandSelect}
+              activeIndex={paletteIndex}
+              onActiveChange={setPaletteIndex}
+            />
           )}
           <InputBar
             value={input}
-            onChange={setInput}
+            onChange={handleInputChange}
             onSubmit={handleSubmit}
-            disabled={isStreaming || isTyping}
+            onNavigate={handleNavigate}
+            onComplete={handleComplete}
+            onClear={handleClear}
+            disabled={isBusy}
           />
         </div>
-      </div>
+      </section>
     </div>
   )
 }

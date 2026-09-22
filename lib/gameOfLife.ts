@@ -1,5 +1,14 @@
 export type LifeGrid = number[][]
 
+export function getPointerGlow(distance: number, radius: number): number {
+  if (radius <= 0 || distance >= radius) return 0
+  if (distance <= 0) return 1
+
+  const progress = distance / radius
+  const smoothProgress = progress * progress * (3 - 2 * progress)
+  return 1 - smoothProgress
+}
+
 export function stepLife(grid: LifeGrid): LifeGrid {
   const rows = grid.length
   const columns = grid[0]?.length ?? 0

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import ProfileScreen from '../ProfileScreen'
 
 const mockOnEnterInteractive = jest.fn()
@@ -16,16 +16,36 @@ describe('ProfileScreen', () => {
     mockOnEnterInteractive.mockClear()
   })
 
-  it('renders the short profile and experience fan', () => {
+  it('renders the short profile without the old site header', () => {
     render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
 
     expect(screen.getByRole('heading', { name: 'Hubert Xu' })).toBeInTheDocument()
-    expect(screen.getByText('Software engineer · University of Toronto')).toBeInTheDocument()
+    expect(screen.queryByText('hubert-xu.com')).not.toBeInTheDocument()
+    expect(screen.queryByText('Toronto')).not.toBeInTheDocument()
+    expect(screen.queryByText('Software engineer · University of Toronto')).not.toBeInTheDocument()
+  })
+
+  it('places the profile links directly below the name', () => {
+    render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
+
+    const identity = screen.getByRole('heading', { name: 'Hubert Xu' }).parentElement
+    expect(identity).not.toBeNull()
+    expect(within(identity!).getByRole('navigation', { name: 'Profile links' })).toBeInTheDocument()
+  })
+
+  it('renders real company logos and interactive detail rows', () => {
+    render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
+
     expect(screen.getByText('Amazon')).toBeInTheDocument()
     expect(screen.getByText('MedMe')).toBeInTheDocument()
     expect(screen.getByText('UofTHacks')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Amazon logo' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'MedMe logo' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'UofTHacks logo' })).toBeInTheDocument()
     expect(screen.getByText('University of Toronto')).toBeInTheDocument()
     expect(screen.getByText('Basketball · building · dilly-dallying')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show education details' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Animate hobbies' })).toBeInTheDocument()
   })
 
   it('renders the profile links', () => {
@@ -52,6 +72,7 @@ describe('ProfileScreen', () => {
   it('enters lumicode from the button or keyboard', () => {
     render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
 
+    expect(screen.getByText('Want to learn more?')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Enter lumicode/i }))
     fireEvent.keyDown(window, { key: '/' })
     fireEvent.keyDown(window, { key: 'Enter' })

@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { stepLife, type LifeGrid } from '@/lib/gameOfLife'
+import { getPointerGlow, stepLife, type LifeGrid } from '@/lib/gameOfLife'
 
 const CELL_SIZE = 12
 const STEP_DELAY = 520
+const GLOW_RADIUS = 170
 
 function createGrid(rows: number, columns: number): LifeGrid {
   return Array.from({ length: rows }, () =>
@@ -35,9 +36,12 @@ export default function GameOfLife() {
           const cellX = x * CELL_SIZE
           const cellY = y * CELL_SIZE
           const distance = Math.hypot(pointer.x - cellX, pointer.y - cellY)
-          context.fillStyle = distance < 100
-            ? 'rgba(135, 185, 255, 0.50)'
-            : 'rgba(205, 218, 210, 0.10)'
+          const glow = getPointerGlow(distance, GLOW_RADIUS)
+          const red = Math.round(205 - 70 * glow)
+          const green = Math.round(218 - 33 * glow)
+          const blue = Math.round(210 + 45 * glow)
+          const alpha = 0.1 + 0.4 * glow
+          context.fillStyle = `rgba(${red}, ${green}, ${blue}, ${alpha})`
           context.fillRect(cellX + 1, cellY + 1, CELL_SIZE - 2, CELL_SIZE - 2)
         }
       }
