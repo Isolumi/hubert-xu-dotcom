@@ -183,3 +183,9 @@ function densifyPolygon(points: Point2D[], spacing: number) {
 export function projectEyePath(points: Point2D[], target: Point2D, spacing = 1.5) {
   return densifyPolygon(points, spacing).map(point => projectEyePoint(point, target))
 }
+
+export function toPathData(points: Point2D[]) {
+  return `${points.map((point, index) => (
+    `${index === 0 ? 'M' : 'L'}${point.x.toFixed(2)} ${point.y.toFixed(2)}`
+  )).join('')}Z`
+}

@@ -165,27 +165,27 @@ git commit -m "feat: add Game of Life background"
 - Consumes: exports from `lib/orbEyes.ts` and viewport pointer events.
 - Produces: an accessible SVG character with spring-smoothed eye motion and periodic blinking.
 
-- [ ] **Step 1: Add a failing path test**
+- [x] **Step 1: Add a failing path test**
 
 Test that the scaled eye path contains more than the original vertices and stays on the visible hemisphere at the side gaze.
 
-- [ ] **Step 2: Run the focused test and confirm RED**
+- [x] **Step 2: Run the focused test and confirm RED**
 
 Run: `npm test -- --runInBand lib/__tests__/orbEyes.test.ts`
 
 Expected: FAIL until the path helper returns the required projected points.
 
-- [ ] **Step 3: Implement the SVG character**
+- [x] **Step 3: Implement the SVG character**
 
 Use the approved body path and two generated eye paths. Listen to pointer movement on `window`, map it to the orb center, clamp gaze to `0.62`, and animate with the approved spring values. Reset to `BASE_GAZE` when the pointer leaves the document. Disable spring and blink animation for reduced motion.
 
-- [ ] **Step 4: Run the focused test and confirm GREEN**
+- [x] **Step 4: Run the focused test and confirm GREEN**
 
 Run: `npm test -- --runInBand lib/__tests__/orbEyes.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit the character**
+- [x] **Step 5: Commit the character**
 
 ```bash
 git add components/OrbCharacter.tsx lib/orbEyes.ts lib/__tests__/orbEyes.test.ts

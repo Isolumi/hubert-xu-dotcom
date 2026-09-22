@@ -7,6 +7,7 @@ import {
   projectEyePoint,
   scalePolygon,
 } from '../orbEyes'
+import * as orbEyes from '../orbEyes'
 
 describe('orb eye geometry', () => {
   it('enlarges an eye around its own center without shifting it', () => {
@@ -65,5 +66,17 @@ describe('orb eye geometry', () => {
         SPHERE_RADIUS + 0.0001,
       )
     }
+  })
+
+  it('serializes projected points as a closed SVG path', () => {
+    expect(typeof orbEyes.toPathData).toBe('function')
+
+    const path = orbEyes.toPathData([
+      { x: 1, y: 2 },
+      { x: 3, y: 4 },
+      { x: 5, y: 6 },
+    ])
+
+    expect(path).toBe('M1.00 2.00L3.00 4.00L5.00 6.00Z')
   })
 })
