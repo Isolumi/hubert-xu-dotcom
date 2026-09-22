@@ -45,7 +45,7 @@ describe('ProfileScreen', () => {
     )
     expect(screen.getByRole('link', { name: /Email/i })).toHaveAttribute(
       'href',
-      'mailto:hubert.xu@mail.utoronto.ca',
+      'mailto:hubertx98@gmail.com',
     )
   })
 

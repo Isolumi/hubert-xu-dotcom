@@ -12,4 +12,22 @@ describe('profile', () => {
     expect(Array.isArray(profile.projects)).toBe(true)
     expect(profile.bio).toBeTruthy()
   })
+
+  it('matches the current resume', () => {
+    expect(profile.links.email).toBe('hubertx98@gmail.com')
+    expect(profile.skills).toEqual(expect.arrayContaining(['C++', 'Rust', 'CUDA', 'Triton', 'K8s']))
+    expect(profile.resumeHighlights.experience).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('Amazon'),
+        expect.stringContaining('77%'),
+        expect.stringContaining('MedMe Health'),
+        expect.stringContaining('43%'),
+        expect.stringContaining('4,000+'),
+      ]),
+    )
+    expect(profile.projects.map(project => project.name)).toEqual([
+      'npm (Open Source Contributor)',
+      'MiniLLM',
+    ])
+  })
 })
