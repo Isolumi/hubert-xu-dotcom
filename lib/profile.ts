@@ -38,8 +38,8 @@ export const profile = {
     'Kafka',
   ],
   companies: [
-    { logo: '/logos/amazon.png', name: 'Amazon', role: 'Software Developer' },
-    { logo: '/logos/medme.png', name: 'MedMe', role: 'Software Engineer' },
+    { logo: '/logos/amazon.png', name: 'Amazon', role: 'SDE' },
+    { logo: '/logos/medme.png', name: 'MedMe', role: 'SWE' },
     { logo: '/logos/uofthacks.svg', name: 'UofTHacks', role: 'President' },
   ],
   links: {

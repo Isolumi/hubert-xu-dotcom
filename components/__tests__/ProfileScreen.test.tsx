@@ -56,8 +56,8 @@ describe('ProfileScreen', () => {
     expect(amazonCard).not.toBeNull()
     expect(medMeCard).not.toBeNull()
     expect(uofthacksCard).not.toBeNull()
-    expect(within(amazonCard!).getByText('Software Developer')).toBeInTheDocument()
-    expect(within(medMeCard!).getByText('Software Engineer')).toBeInTheDocument()
+    expect(within(amazonCard!).getByText('SDE')).toBeInTheDocument()
+    expect(within(medMeCard!).getByText('SWE')).toBeInTheDocument()
     expect(within(uofthacksCard!).getByText('President')).toBeInTheDocument()
   })
 
