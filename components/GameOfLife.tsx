@@ -3,9 +3,14 @@
 import { useEffect, useRef } from 'react'
 import { getPointerGlow, stepLife, type LifeGrid } from '@/lib/gameOfLife'
 
-const CELL_SIZE = 12
-const STEP_DELAY = 520
 const GLOW_RADIUS = 170
+
+type Props = {
+  cellSize: number
+  stepDelay: number
+  glowStrength: number
+  refresh: number
+}
 
 function createGrid(rows: number, columns: number): LifeGrid {
   return Array.from({ length: rows }, () =>
@@ -13,8 +18,22 @@ function createGrid(rows: number, columns: number): LifeGrid {
   )
 }
 
-export default function GameOfLife() {
+export default function GameOfLife({ cellSize, stepDelay, glowStrength, refresh }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const stepDelayRef = useRef(stepDelay)
+  const glowStrengthRef = useRef(glowStrength)
+  const restartRef = useRef<() => void>(() => {})
+  const paintRef = useRef<() => void>(() => {})
+
+  useEffect(() => {
+    stepDelayRef.current = stepDelay
+    restartRef.current()
+  }, [stepDelay])
+
+  useEffect(() => {
+    glowStrengthRef.current = glowStrength
+    paintRef.current()
+  }, [glowStrength])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,16 +52,16 @@ export default function GameOfLife() {
       for (let y = 0; y < rows; y += 1) {
         for (let x = 0; x < columns; x += 1) {
           if (grid[y][x] !== 1) continue
-          const cellX = x * CELL_SIZE
-          const cellY = y * CELL_SIZE
+          const cellX = x * cellSize
+          const cellY = y * cellSize
           const distance = Math.hypot(pointer.x - cellX, pointer.y - cellY)
           const glow = getPointerGlow(distance, GLOW_RADIUS)
           const red = Math.round(205 - 70 * glow)
           const green = Math.round(218 - 33 * glow)
           const blue = Math.round(210 + 45 * glow)
-          const alpha = 0.1 + 0.4 * glow
+          const alpha = Math.min(1, 0.1 + 0.4 * glow * glowStrengthRef.current)
           context.fillStyle = `rgba(${red}, ${green}, ${blue}, ${alpha})`
-          context.fillRect(cellX + 1, cellY + 1, CELL_SIZE - 2, CELL_SIZE - 2)
+          context.fillRect(cellX + 1, cellY + 1, cellSize - 2, cellSize - 2)
         }
       }
     }
@@ -53,8 +72,8 @@ export default function GameOfLife() {
       canvas.width = Math.max(1, Math.floor(rect.width * density))
       canvas.height = Math.max(1, Math.floor(rect.height * density))
       context.setTransform(density, 0, 0, density, 0, 0)
-      columns = Math.ceil(rect.width / CELL_SIZE)
-      rows = Math.ceil(rect.height / CELL_SIZE)
+      columns = Math.ceil(rect.width / cellSize)
+      rows = Math.ceil(rect.height / cellSize)
       grid = createGrid(rows, columns)
       paint()
     }
@@ -76,10 +95,13 @@ export default function GameOfLife() {
       intervalId = setInterval(() => {
         grid = stepLife(grid)
         paint()
-      }, STEP_DELAY)
+      }, stepDelayRef.current)
     }
 
     const updateMotion = () => start()
+
+    paintRef.current = paint
+    restartRef.current = start
 
     resize()
     start()
@@ -89,11 +111,13 @@ export default function GameOfLife() {
 
     return () => {
       stop()
+      paintRef.current = () => {}
+      restartRef.current = () => {}
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', updatePointer)
       motionQuery?.removeEventListener('change', updateMotion)
     }
-  }, [])
+  }, [cellSize, refresh])
 
   return (
     <canvas

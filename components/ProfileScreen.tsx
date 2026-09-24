@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Fragment, useEffect, type CSSProperties } from 'react'
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react'
 import GameOfLife from '@/components/GameOfLife'
 import OrbCharacter from '@/components/OrbCharacter'
 import { profile } from '@/lib/profile'
@@ -11,7 +11,19 @@ type Props = {
   onEnterInteractive: () => void
 }
 
+const CELL_SIZES = { small: 8, normal: 12, large: 18 } as const
+const SPEEDS = { slow: 900, normal: 520, fast: 220 } as const
+const GLOWS = { low: 0.55, normal: 1, bright: 1.5 } as const
+
 export default function ProfileScreen({ onEnterInteractive }: Props) {
+  const [cellSize, setCellSize] = useState<keyof typeof CELL_SIZES>('normal')
+  const [speed, setSpeed] = useState<keyof typeof SPEEDS>('normal')
+  const [glow, setGlow] = useState<keyof typeof GLOWS>('normal')
+  const [refresh, setRefresh] = useState(0)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(false)
+  const settingsRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       const target = event.target
@@ -23,9 +35,41 @@ export default function ProfileScreen({ onEnterInteractive }: Props) {
     return () => window.removeEventListener('keydown', handler)
   }, [onEnterInteractive])
 
+  useEffect(() => {
+    const query = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    if (!query) return
+    const update = () => setReducedMotion(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  useEffect(() => {
+    if (!settingsOpen) return
+
+    const closeOnOutside = (event: PointerEvent) => {
+      if (!settingsRef.current?.contains(event.target as Node)) setSettingsOpen(false)
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSettingsOpen(false)
+    }
+
+    window.addEventListener('pointerdown', closeOnOutside)
+    window.addEventListener('keydown', closeOnEscape)
+    return () => {
+      window.removeEventListener('pointerdown', closeOnOutside)
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [settingsOpen])
+
   return (
     <section className={styles.screen} aria-labelledby="profile-name">
-      <GameOfLife />
+      <GameOfLife
+        cellSize={CELL_SIZES[cellSize]}
+        stepDelay={SPEEDS[speed]}
+        glowStrength={GLOWS[glow]}
+        refresh={refresh}
+      />
 
       <div className={styles.profile}>
         <OrbCharacter />
@@ -114,6 +158,64 @@ export default function ProfileScreen({ onEnterInteractive }: Props) {
             </div>
           </dl>
         </div>
+      </div>
+
+      <div ref={settingsRef} className={styles.lifeSettings}>
+        {settingsOpen && (
+          <div id="life-settings" className={styles.lifePanel} role="group" aria-label="Game of Life settings">
+            <div className={styles.lifePanelTitle}>game of life</div>
+
+            <fieldset className={styles.lifeSettingRow}>
+              <legend>cell size</legend>
+              <div className={styles.lifeChoices}>
+                {(['small', 'normal', 'large'] as const).map(option => (
+                  <button key={option} type="button" aria-pressed={cellSize === option} onClick={() => setCellSize(option)}>
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset className={styles.lifeSettingRow}>
+              <legend>speed</legend>
+              <div className={styles.lifeChoices}>
+                {(['slow', 'normal', 'fast'] as const).map(option => (
+                  <button key={option} type="button" aria-pressed={speed === option} disabled={reducedMotion} onClick={() => setSpeed(option)}>
+                    {option}
+                  </button>
+                ))}
+              </div>
+              {reducedMotion && <p className={styles.lifeMotionNote}>motion is off in your device settings</p>}
+            </fieldset>
+
+            <fieldset className={styles.lifeSettingRow}>
+              <legend>glow</legend>
+              <div className={styles.lifeChoices}>
+                {(['low', 'normal', 'bright'] as const).map(option => (
+                  <button key={option} type="button" aria-pressed={glow === option} onClick={() => setGlow(option)}>
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <button className={styles.lifeNewPattern} type="button" onClick={() => setRefresh(value => value + 1)}>
+              new pattern
+            </button>
+          </div>
+        )}
+        <button
+          type="button"
+          className={styles.lifeSettingsTrigger}
+          aria-label="Background settings"
+          aria-controls="life-settings"
+          aria-expanded={settingsOpen}
+          onClick={() => setSettingsOpen(open => !open)}
+        >
+          <span className={styles.lifeGridIcon} aria-hidden="true">
+            {Array.from({ length: 9 }, (_, index) => <span key={index} />)}
+          </span>
+        </button>
       </div>
 
       <footer className={styles.footer}>

@@ -114,4 +114,31 @@ describe('ProfileScreen', () => {
 
     expect(fan).toHaveFocus()
   })
+
+  it('opens background controls and marks each chosen display setting', () => {
+    render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
+
+    const trigger = screen.getByRole('button', { name: 'Background settings' })
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    fireEvent.click(trigger)
+
+    const panel = screen.getByRole('group', { name: 'Game of Life settings' })
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+
+    const cellSize = within(panel).getByRole('group', { name: 'cell size' })
+    fireEvent.click(within(cellSize).getByRole('button', { name: 'large' }))
+    expect(within(cellSize).getByRole('button', { name: 'large' })).toHaveAttribute('aria-pressed', 'true')
+
+    const speed = within(panel).getByRole('group', { name: 'speed' })
+    fireEvent.click(within(speed).getByRole('button', { name: 'fast' }))
+    expect(within(speed).getByRole('button', { name: 'fast' })).toHaveAttribute('aria-pressed', 'true')
+
+    const glow = within(panel).getByRole('group', { name: 'glow' })
+    fireEvent.click(within(glow).getByRole('button', { name: 'bright' }))
+    expect(within(glow).getByRole('button', { name: 'bright' })).toHaveAttribute('aria-pressed', 'true')
+
+    expect(within(panel).getByRole('button', { name: 'new pattern' })).toBeInTheDocument()
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(screen.queryByRole('group', { name: 'Game of Life settings' })).not.toBeInTheDocument()
+  })
 })
