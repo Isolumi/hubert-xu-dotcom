@@ -446,6 +446,25 @@
   transform: scaleY(0.08);
 }
 
+:global(.orb-hint) {
+  position: absolute;
+  bottom: -0.55rem;
+  left: 50%;
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.015em;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(-50%, 0.2rem);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+
+:global(.orb-hint.is-visible:not(.is-dismissed)) {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 @keyframes orb-breathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.012, 0.982) translateY(1.5px); }
@@ -521,6 +540,12 @@
   }
 }
 
+@media (hover: none), (pointer: coarse) {
+  :global(.orb-hint) {
+    display: none;
+  }
+}
+
 @media (max-width: 430px) {
   .profile {
     padding-top: 2rem;
@@ -569,6 +594,10 @@
   :global(.orb-body) {
     transition: none;
     animation: none;
+  }
+
+  :global(.orb-hint) {
+    transition: none;
   }
 
   .hobbyGlyph {

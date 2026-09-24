@@ -26,11 +26,13 @@ const INITIAL_RIGHT_PATH = eyePath(RIGHT_EYE, BASE_GAZE)
 
 export default function OrbCharacter() {
   const svgRef = useRef<SVGSVGElement>(null)
+  const hintRef = useRef<HTMLSpanElement>(null)
   const leftEyeRef = useRef<SVGPathElement>(null)
   const rightEyeRef = useRef<SVGPathElement>(null)
 
   useEffect(() => {
     const svg = svgRef.current
+    const hint = hintRef.current
     const leftEye = leftEyeRef.current
     const rightEye = rightEyeRef.current
     if (!svg || !leftEye || !rightEye) return
@@ -43,6 +45,10 @@ export default function OrbCharacter() {
     let animationFrame = 0
     let blinkTimer = 0
     let blinkEndTimer = 0
+    let hintTimer = 0
+    let hintIsVisible = false
+    let pointerDistance = 0
+    let previousPointer: Point2D | null = null
 
     const renderEyes = () => {
       leftEye.setAttribute('d', eyePath(LEFT_EYE, current))
@@ -60,6 +66,17 @@ export default function OrbCharacter() {
     }
 
     const pointAt = (event: PointerEvent) => {
+      if (hintIsVisible && hint && !hint.classList.contains('is-dismissed')) {
+        if (previousPointer) {
+          pointerDistance += Math.hypot(
+            event.clientX - previousPointer.x,
+            event.clientY - previousPointer.y,
+          )
+        }
+        previousPointer = { x: event.clientX, y: event.clientY }
+        if (pointerDistance > 80) hint.classList.add('is-dismissed')
+      }
+
       const rect = svg.getBoundingClientRect()
       let x = (event.clientX - (rect.left + rect.width / 2)) / (rect.width * 0.55)
       let y = (event.clientY - (rect.top + rect.height / 2)) / (rect.height * 0.55)
@@ -111,6 +128,10 @@ export default function OrbCharacter() {
     }
 
     window.addEventListener('pointermove', pointAt, { passive: true })
+    hintTimer = window.setTimeout(() => {
+      hintIsVisible = true
+      hint?.classList.add('is-visible')
+    }, 900)
     document.documentElement.addEventListener('pointerleave', reset)
     window.addEventListener('blur', reset)
     motionQuery?.addEventListener('change', updateMotion)
@@ -120,6 +141,7 @@ export default function OrbCharacter() {
       window.cancelAnimationFrame(animationFrame)
       window.clearTimeout(blinkTimer)
       window.clearTimeout(blinkEndTimer)
+      window.clearTimeout(hintTimer)
       window.removeEventListener('pointermove', pointAt)
       document.documentElement.removeEventListener('pointerleave', reset)
       window.removeEventListener('blur', reset)
@@ -144,6 +166,7 @@ export default function OrbCharacter() {
           <path ref={rightEyeRef} className="orb-eye" d={INITIAL_RIGHT_PATH} />
         </g>
       </svg>
+      <span ref={hintRef} className="orb-hint" aria-hidden="true">move your cursor around :)</span>
     </div>
   )
 }
