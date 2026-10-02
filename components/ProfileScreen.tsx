@@ -80,6 +80,7 @@ export default function ProfileScreen({ onEnterInteractive }: Props) {
             <nav className={styles.links} aria-label="Profile links">
               <a href={profile.links.github} target="_blank" rel="noreferrer">GitHub</a>
               <a href={profile.links.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+              <a href={profile.links.x} target="_blank" rel="noreferrer">X</a>
               <a href="/Hubert_Xu_Resume.pdf" target="_blank" rel="noreferrer">Résumé</a>
               <a href={`mailto:${profile.links.email}`}>Email</a>
             </nav>

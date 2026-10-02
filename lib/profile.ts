@@ -45,6 +45,7 @@ export const profile = {
   links: {
     github: 'https://github.com/isolumi',
     linkedin: 'https://www.linkedin.com/in/~hx/',
+    x: 'https://x.com/Isolumi',
     email: 'hubertx98@gmail.com',
   },
   projects: [

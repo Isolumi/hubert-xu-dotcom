@@ -33,6 +33,17 @@ describe('ProfileScreen', () => {
     expect(within(identity!).getByRole('navigation', { name: 'Profile links' })).toBeInTheDocument()
   })
 
+  it('links to X from the profile links below the name', () => {
+    render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
+
+    const identity = screen.getByRole('heading', { name: 'Hubert Xu' }).parentElement
+    const links = within(identity!).getByRole('navigation', { name: 'Profile links' })
+    expect(within(links).getByRole('link', { name: 'X' })).toHaveAttribute(
+      'href',
+      'https://x.com/Isolumi',
+    )
+  })
+
   it('renders real company logos and interactive detail rows', () => {
     render(<ProfileScreen onEnterInteractive={mockOnEnterInteractive} />)
 
